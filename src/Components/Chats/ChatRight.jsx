@@ -125,7 +125,7 @@ function ChatRight() {
     <main
       className="flex flex-col"
       style={{
-        height: "100vh",
+        height: "90vh",
         width: "100%",
       }}
     >
@@ -217,12 +217,22 @@ function ChatRight() {
         </section>
       </main>
       {EmojiKeyboard()}
-      <footer className="flex items-center justify-between p-3  border-t-2 border-gray-100">
+      <footer className="flex items-center justify-between p-3  border-t-2 border-gray-100 flex-wrap">
+        
+        <section className="flex items-center w-full">
+          <form onSubmit={sendMessage} className="w-full">
+            <input
+              type="text"
+              className="border-2 border-gray-100 px-3 py-2 rounded focus:outline-none w-full"
+              placeholder="Type a message"
+              id="message"
+            />
+          </form>
+          <i className="fas fa-paper-plane text-blue-500 mx-2"></i>
+        </section>
         <section className="flex items-center mr-4">
-          <img
-            src="https://img.icons8.com/color/24/000000/happy.png"
-            alt="emoji"
-            className="w-6 h-6 mx-2 cursor-pointer"
+          <i className="fas fa-smile text-yellow-500 cursor-pointer mx-2 m-4 border-2 border-gray-100 p-1 rounded"
+
             onClick={() => {
               const emojiKeyboard = document.getElementById("emojiKeyboard");
               if (emojiKeyboard.style.display === "block") {
@@ -231,20 +241,10 @@ function ChatRight() {
                 document.getElementById("emojiKeyboard").style.display =
                   "block";
             }}
-          />
-          <i className="fas fa-paperclip text-blue-500  cursor-pointer"></i>
+          ></i>
+          <i className="fas fa-paperclip cursor-pointer mx-2 m-4 border-2 border-gray-100 p-1 rounded"
+          ></i>
         </section>
-        <section className="flex items-cente w-full">
-          <form onSubmit={sendMessage}>
-            <input
-              type="text"
-              className="border-2 border-gray-100 px-3 py-2 rounded focus:outline-none w-full"
-              placeholder="Type a message"
-              id="message"
-            />
-          </form>
-        </section>
-        <i className="fas fa-paper-plane text-blue-500 mx-2"></i>
       </footer>
     </main>
   );

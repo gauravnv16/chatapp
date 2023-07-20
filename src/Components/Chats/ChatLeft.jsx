@@ -28,6 +28,7 @@ function ChatLeft() {
       style={{
         maxWidth: "400px",
         width: "100%",
+        height: "90vh",
       }}
       className="flex flex-col"
     >

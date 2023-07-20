@@ -22,12 +22,17 @@ function ChatScreen(){
     return(
         <UserContextProvider>
         <div className="flex w-full justify-center" style={{
-            height: "calc(60vh - 80px)",
+            display: "flex",
+            justifyContent: "center",
+
+            alignItems: "center",
+            height: "90vh",
+            padding: "10px",
         }}>
             {
                 width > 600 && <ChatLeft/>
             }
-            <div className="chat-right ms-5 w-full">
+            <div className="chat-right w-full">
                 <ChatRight/>
             </div>
         </div>

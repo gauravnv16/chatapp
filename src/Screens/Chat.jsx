@@ -19,7 +19,10 @@ function Chat(){
 
     return(
         <div className="flex w-full justify-center" style={{
-            height: "calc(100vh - 80px)",
+            // height: "calc(100vh - 80px)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
         }}>
             <ChatLeft/>
             {
