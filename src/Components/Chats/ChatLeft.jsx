@@ -60,7 +60,7 @@ function ChatLeft() {
                   width: "100%",
                 }}
                 onClick={() => {
-                  localStorage.setItem("chatUser", JSON.stringify(user));
+                  sessionStorage.setItem("chatUser", JSON.stringify(user));
                 }}
               >
                 <section className="flex items-center">

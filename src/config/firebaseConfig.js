@@ -4,14 +4,14 @@ import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 import { GoogleAuthProvider } from "firebase/auth";
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_DATABASE_URL,
-  projectId: import.meta.env.VITE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_APP_ID,
-  measurementId: import.meta.env.VITE_MEASUREMENT_ID
+  apiKey: "AIzaSyDTpfRwWyu1PrLq7VZJJ0vyeT2qg8L48EE",
+  authDomain: "glumehat.firebaseapp.com",
+  databaseURL: "https://glumehat-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "glumehat",
+  storageBucket: "glumehat.appspot.com",
+  messagingSenderId: "1001799626374",
+  appId: "1:1001799626374:web:e499fa3cf75655433cab07",
+  measurementId: "G-JJTC8K0L0T"
 };
 
 export const app = initializeApp(firebaseConfig);

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import {  useParams } from "react-router";
 import { UserContext } from "../../Contexts/UserContextProvider";
 import { auth, database } from "../../config/firebaseConfig";
 import { onValue, ref, set } from "firebase/database";
@@ -104,7 +104,7 @@ function ChatRight() {
   const { id } = path;
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("chatUser"));
+    const user = JSON.parse(sessionStorage.getItem("chatUser"));
     setChatUser(user);
   }, [id, messages]);
 
@@ -119,6 +119,7 @@ function ChatRight() {
     });
   }, []);
 
+  if(!chatUser) return <h1>Loading...</h1>
 
   return (
     <main
@@ -228,15 +229,12 @@ function ChatRight() {
           />
           <i className="fas fa-paperclip text-blue-500  cursor-pointer"></i>
         </section>
-        <section className="flex items-center space-x-2 w-full ms-2">
+        <section className="flex items-cente w-full" >
           <form onSubmit={sendMessage}>
             <input
               type="text"
-              className="border-2 border-gray-100 px-3 py-2 rounded focus:outline-none "
+              className="border-2 border-gray-100 px-3 py-2 rounded focus:outline-none w-full"
               placeholder="Type a message"
-              style={{
-                width: "100%",
-              }}
               id="message"
             />
           </form>
