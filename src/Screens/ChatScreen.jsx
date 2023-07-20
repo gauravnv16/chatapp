@@ -3,9 +3,11 @@ import ChatLeft from "../Components/Chats/ChatLeft";
 import ChatRight from "../Components/Chats/ChatRight";
 import UserContextProvider from "../Contexts/UserContextProvider";
 import { auth } from "../config/firebaseConfig";
+import { useNavigate } from "react-router";
 
 function ChatScreen(){
     const [width, setWidth] = useState(0);
+    const navigate = useNavigate();
     
     useEffect(() => {
         const width = screen.width;
@@ -13,7 +15,8 @@ function ChatScreen(){
     },[width]);
 
     if(!auth.currentUser){
-        window.location.href = "/login";
+        navigate('/login');
+        return;
     }
 
     return(
