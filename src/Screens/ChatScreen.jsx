@@ -21,7 +21,9 @@ function ChatScreen(){
 
     return(
         <UserContextProvider>
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center" style={{
+            height: "calc(60vh - 80px)",
+        }}>
             {
                 width > 600 && <ChatLeft/>
             }

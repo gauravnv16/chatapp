@@ -18,7 +18,9 @@ function Chat(){
     }
 
     return(
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center" style={{
+            height: "calc(100vh - 80px)",
+        }}>
             <ChatLeft/>
             {
                 width > 600 && <div className="chat-right ms-5 w-full">

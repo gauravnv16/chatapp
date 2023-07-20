@@ -65,7 +65,7 @@ function ChatLeft() {
               >
                 <section className="flex items-center">
                   <img
-                    src={user.profilePic}
+                    src="https://img.icons8.com/color/48/000000/test-account.png"
                     alt={user.name}
                     className="w-8 h-8 rounded-full me-2"
                   />

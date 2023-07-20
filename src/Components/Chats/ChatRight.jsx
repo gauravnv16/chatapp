@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import {  useParams } from "react-router";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router";
 import { UserContext } from "../../Contexts/UserContextProvider";
 import { auth, database } from "../../config/firebaseConfig";
 import { onValue, ref, set } from "firebase/database";
@@ -7,8 +7,9 @@ import { Link } from "react-router-dom";
 
 function SortMessages(messages) {
   const sortedMessages = messages.sort((a, b) => {
-    return new Date(a.time2) - new Date(b.time2);
+    return a.time2 - b.time2;
   });
+
   return sortedMessages;
 }
 function EmojiKeyboard() {
@@ -51,8 +52,7 @@ function EmojiKeyboard() {
       </h1>
 
       <section className="flex flex-wrap justify-center">
-        {
-        icons.map((icon, index) => (
+        {icons.map((icon, index) => (
           <p
             className="text-2xl cursor-pointer"
             key={index}
@@ -72,6 +72,7 @@ function ChatRight() {
   const [messages, setMessages] = useState([]);
   const path = useParams("1");
   const uc = useContext(UserContext);
+  const endRef = useRef(null);
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -81,15 +82,9 @@ function ChatRight() {
       to: chatUser.uid,
       time: new Date().toLocaleTimeString(),
       type: "text",
-      time2:Date.now()
+      time2: Date.now(),
     };
-    await set(
-      ref(
-        database,
-        "messages/"+crypto.randomUUID()
-      ),
-      message
-    );
+    await set(ref(database, "messages/" + crypto.randomUUID()), message);
   };
 
   // const Search = (e) => {
@@ -108,18 +103,23 @@ function ChatRight() {
     setChatUser(user);
   }, [id, messages]);
 
+
   useEffect(() => {
-    const DataRef = ref(
-      database,
-      "messages/"
-    );
+    const DataRef = ref(database, "messages/");
     return onValue(DataRef, (snapshot) => {
       const data = snapshot.val();
       setMessages(SortMessages(Object.values(data)));
     });
   }, []);
+  const scrollToBottom = () => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
-  if(!chatUser) return <h1>Loading...</h1>
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages]);
+
+  if (!chatUser) return <h1>Loading...</h1>;
 
   return (
     <main
@@ -184,14 +184,17 @@ function ChatRight() {
       <main
         className="flex flex-col p-3"
         style={{
-          height: "calc(100vh - 80px)",
+          height: "90%",
           overflowY: "scroll",
           width: "100%",
         }}
       >
         <section className="flex flex-col">
           {messages.map((message, index) => {
-            if (message.from !== auth.currentUser?.uid)
+            if (
+              message.from === chatUser.uid &&
+              message.to === auth.currentUser?.uid
+            )
               return (
                 <section className="flex flex-col items-start mt-3" key={index}>
                   <p className="bg-gray-100 p-2 rounded-tr-3xl rounded-bl-3xl rounded-br-3xl">
@@ -200,6 +203,7 @@ function ChatRight() {
                   <p className="text-gray-400 text-xs">{message.time}</p>
                 </section>
               );
+            else if ( message.from === auth.currentUser?.uid && message.to === chatUser.uid )
             return (
               <section className="flex flex-col items-end mt-3" key={index}>
                 <p className="bg-blue-500 text-white p-2 rounded-tl-3xl rounded-br-3xl rounded-bl-3xl">
@@ -209,6 +213,7 @@ function ChatRight() {
               </section>
             );
           })}
+          <section id="bottom" ref={endRef}></section>
         </section>
       </main>
       {EmojiKeyboard()}
@@ -229,7 +234,7 @@ function ChatRight() {
           />
           <i className="fas fa-paperclip text-blue-500  cursor-pointer"></i>
         </section>
-        <section className="flex items-cente w-full" >
+        <section className="flex items-cente w-full">
           <form onSubmit={sendMessage}>
             <input
               type="text"
