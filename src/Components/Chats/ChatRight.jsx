@@ -19,22 +19,26 @@ function ImageEnlarger({ image }) {
         document.getElementById("imageEnlarger").style.display = "none";
       }}
       id="imageEnlarger"
+      style={{
+        display: "none",
+      }}
     >
       <img src={image} alt="" className="w-1/2 h-1/2" />
       {/* download button */}
-      <button className="bg-blue-500 text-white p-2 rounded mt-2" onClick={
-        () => {
-          const link = document.createElement('a');
+      <button
+        className="bg-blue-500 text-white p-2 rounded mt-2"
+        onClick={() => {
+          const link = document.createElement("a");
           link.href = image;
-          link.download = 'image';
+          link.download = "image";
           link.click();
-        }
-      }>
+        }}
+      >
         download
         <i className="fas fa-download ms-2"></i>
       </button>
     </section>
-  )
+  );
 }
 function ChatRight() {
   const [chatUser, setChatUser] = useState("");
@@ -42,7 +46,7 @@ function ChatRight() {
   const [filteredMessages, setFilteredMessages] = useState([]);
   const path = useParams("1");
   const endRef = useRef(null);
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState("");
 
   const Search = (e) => {
     const value = e.target.value;
@@ -138,14 +142,16 @@ function ChatRight() {
                         }}
                         onClick={() => {
                           setImage(message.message);
-                          document.getElementById('imageEnlarger').style.display = 'flex';
+                          document.getElementById(
+                            "imageEnlarger"
+                          ).style.display = "flex";
                         }}
                       />
                       <p className="text-gray-400 text-xs mt-2">12:50</p>
                     </section>
                   </section>
                 );
-              } else 
+              } else
                 return (
                   <MessageItem
                     message={message.message}
@@ -164,16 +170,21 @@ function ChatRight() {
                   <section className="flex flex-col items-end" key={index}>
                     <section className="flex ">
                       <section className="flex flex-col items-end mt-3">
-                        <img src={message.message} alt="" style={{
-                          height: "200px",
-                          width: "200px",
-                          borderRadius: "10px",
-                        }} onClick={
-                          () => {
+                        <img
+                          src={message.message}
+                          alt=""
+                          style={{
+                            height: "200px",
+                            width: "200px",
+                            borderRadius: "10px",
+                          }}
+                          onClick={() => {
                             setImage(message.message);
-                            document.getElementById('imageEnlarger').style.display = 'flex';
-                          }
-                        }/>
+                            document.getElementById(
+                              "imageEnlarger"
+                            ).style.display = "flex";
+                          }}
+                        />
                         <p className="text-gray-400 text-xs mt-2">12:50</p>
                       </section>
                       <img
@@ -183,25 +194,24 @@ function ChatRight() {
                       />
                     </section>
                   </section>
-                )
-              }
-              else
-              return (
-                <MessageItem
-                  message={message.message}
-                  index={index}
-                  time={message.time}
-                  key={index}
-                  sentForm={"right"}
-                />
-              );
+                );
+              } else
+                return (
+                  <MessageItem
+                    message={message.message}
+                    index={index}
+                    time={message.time}
+                    key={index}
+                    sentForm={"right"}
+                  />
+                );
           })}
           <section id="bottom" ref={endRef}></section>
         </section>
       </main>
       <EmojiKeyboard />
       <FileUploadMenu from={auth.currentUser?.uid} to={chatUser.uid} />
-      <ImageEnlarger image={image}/>
+      <ImageEnlarger image={image} />
       <footer className="flex items-center justify-between p-3  bg-gray-100 flex-wrap">
         <section className="flex items-center w-full">
           <form
@@ -237,16 +247,18 @@ function ChatRight() {
                   "block";
             }}
           ></i>
-          <i className="fas fa-paperclip cursor-pointer mx-2 m-4 border-2 border-gray-100 bg-white p-1 px-3 rounded-xl text-2xl" onClick={
-            () => {
-              const fileUploadScreen = document.getElementById('fileUploadScreen');
-              if (fileUploadScreen.style.display === 'flex') {
-                fileUploadScreen.style.display = 'none';
+          <i
+            className="fas fa-paperclip cursor-pointer mx-2 m-4 border-2 border-gray-100 bg-white p-1 px-3 rounded-xl text-2xl"
+            onClick={() => {
+              const fileUploadScreen =
+                document.getElementById("fileUploadScreen");
+              if (fileUploadScreen.style.display === "flex") {
+                fileUploadScreen.style.display = "none";
               } else {
-                fileUploadScreen.style.display = 'flex';
+                fileUploadScreen.style.display = "flex";
               }
-            }
-          }></i>
+            }}
+          ></i>
         </section>
       </footer>
     </main>
