@@ -42,7 +42,11 @@ function LoginForm() {
     }
   }
   return (
-    <main className="flex items-center justify-center">
+    <main className="flex items-center justify-center" style={{
+      height: '90vh',
+      width: '100%',
+      padding: '0 20px',
+    }}>
       <form style={{
         width: '350px',
         display: 'flex',
@@ -78,7 +82,7 @@ function LoginForm() {
         <button className="mt-3 bg-white border-2 border-gray-100 px-3 py-2 rounded w-fit" onClick={
           handleGoogleLogin
         }>
-          <img src="https://img.icons8.com/color/24/000000/google-logo.png" alt="google" />
+          <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="google" />
         </button>
       </form>
     </main>

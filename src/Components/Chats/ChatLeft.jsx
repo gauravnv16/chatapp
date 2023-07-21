@@ -29,6 +29,8 @@ function ChatLeft() {
         maxWidth: "400px",
         width: "100%",
         height: "90vh",
+        backgroundColor: "white",
+        border: "2px solid #e4e4e4",
       }}
       className="flex flex-col"
     >
@@ -42,6 +44,20 @@ function ChatLeft() {
           />
         </section>
       </header>
+      {/* menu */}
+      <section className="flex items-center justify-between p-3 border-b-2 border-gray-100">
+       {/* log out */}
+       <h2 className="text-lg">{auth.currentUser?.displayName || "User"}</h2>
+        <button className="flex items-end px-3 py-2 rounded-xl bg-red-500" onClick={
+          () => {
+            auth.signOut();
+            navigate('/login');
+          }
+        }>
+          <i className="fas fa-sign-out-alt text-white mr-2 text-sm "></i>
+          <p className="text-white text-sm">Log Out</p>
+        </button>
+      </section>
       <main
         className="flex flex-col p-3"
         style={{

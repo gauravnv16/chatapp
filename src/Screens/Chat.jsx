@@ -23,6 +23,9 @@ function Chat(){
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            height: "90vh",
+            padding: "10px",
+            backgroundColor:"white"
         }}>
             <ChatLeft/>
             {

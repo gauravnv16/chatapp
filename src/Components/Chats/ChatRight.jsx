@@ -1,100 +1,57 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { UserContext } from "../../Contexts/UserContextProvider";
 import { auth, database } from "../../config/firebaseConfig";
-import { onValue, ref, set } from "firebase/database";
+import { onValue, ref } from "firebase/database";
 import { Link } from "react-router-dom";
+import SortMessages from "../../Util/SortMessages";
+import EmojiKeyboard from "./Components/EmojiKeyBoard";
+import MessageItem from "./Components/Message";
+import MessageSearch from "./Components/MessageSearch";
+import sendMessage from "../../Util/SendMessage";
+import HeaderIcons from "./Components/HeaderIcons";
+import FileUploadMenu from "./Components/FileUpload";
 
-function SortMessages(messages) {
-  const sortedMessages = messages.sort((a, b) => {
-    return a.time2 - b.time2;
-  });
-
-  return sortedMessages;
-}
-function EmojiKeyboard() {
-  const icons = [
-    "😀",
-    "😁",
-    "😂",
-    "🤣",
-    "😃",
-    "😄",
-    "😅",
-    "😆",
-    "😉",
-    "😊",
-    "😋",
-    "😎",
-    "😍",
-    "😘",
-  ];
+function ImageEnlarger({ image }) {
   return (
     <section
-      style={{
-        width: "250px",
-        display: "none",
-        position: "absolute",
-        bottom: "70px",
+      className="flex flex-col fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center"
+      onClick={() => {
+        document.getElementById("imageEnlarger").style.display = "none";
       }}
-      id="emojiKeyboard"
-      className="p-2 bg-gray-100 mb-2 rounded ml-2"
+      id="imageEnlarger"
     >
-      <h1 className="text-2x mb-3">
-        {/* back */}
-        <i
-          className="fas fa-arrow-left text-blue-500 cursor-pointer mr-2"
-          onClick={() => {
-            document.getElementById("emojiKeyboard").style.display = "none";
-          }}
-        ></i>
-        Emojis
-      </h1>
-
-      <section className="flex flex-wrap justify-center">
-        {icons.map((icon, index) => (
-          <p
-            className="text-2xl cursor-pointer"
-            key={index}
-            onClick={() => {
-              document.getElementById("message").value += icon;
-            }}
-          >
-            {icon}
-          </p>
-        ))}
-      </section>
+      <img src={image} alt="" className="w-1/2 h-1/2" />
+      {/* download button */}
+      <button className="bg-blue-500 text-white p-2 rounded mt-2" onClick={
+        () => {
+          const link = document.createElement('a');
+          link.href = image;
+          link.download = 'image';
+          link.click();
+        }
+      }>
+        download
+        <i className="fas fa-download ms-2"></i>
+      </button>
     </section>
-  );
+  )
 }
 function ChatRight() {
   const [chatUser, setChatUser] = useState("");
   const [messages, setMessages] = useState([]);
+  const [filteredMessages, setFilteredMessages] = useState([]);
   const path = useParams("1");
-  const uc = useContext(UserContext);
   const endRef = useRef(null);
+  const [image, setImage] = useState('');
 
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    const message = {
-      message: document.getElementById("message").value,
-      from: auth.currentUser?.uid,
-      to: chatUser.uid,
-      time: new Date().toLocaleTimeString(),
-      type: "text",
-      time2: Date.now(),
-    };
-    await set(ref(database, "messages/" + crypto.randomUUID()), message);
+  const Search = (e) => {
+    const value = e.target.value;
+    if (value === "") return setFilteredMessages(messages);
+    const filteredMessages = messages.filter((message) =>
+      message.message.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredMessages(SortMessages(filteredMessages));
   };
-
-  // const Search = (e) => {
-  //   const value = e.target.value;
-  //   if (value === "") return setMessages(messages);
-  //   const filteredMessages = messages.filter((message) =>
-  //     message.message.toLowerCase().includes(value.toLowerCase())
-  //   );
-  //   setMessages(filteredMessages);
-  // };
 
   const { id } = path;
 
@@ -103,20 +60,21 @@ function ChatRight() {
     setChatUser(user);
   }, [id, messages]);
 
-
   useEffect(() => {
     const DataRef = ref(database, "messages/");
     return onValue(DataRef, (snapshot) => {
       const data = snapshot.val();
       setMessages(SortMessages(Object.values(data)));
+      setFilteredMessages(SortMessages(Object.values(data)));
     });
   }, []);
+
   const scrollToBottom = () => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
+    scrollToBottom();
   }, [messages]);
 
   if (!chatUser) return <h1>Loading...</h1>;
@@ -144,43 +102,9 @@ function ChatRight() {
             <p className="text-gray-400 text-sm">Online</p>
           </section>
         </section>
-        <section className="flex items-center">
-          <img
-            src="https://img.icons8.com/color/24/000000/video-call.png"
-            alt="video"
-            className="w-6 h-6 mr-3"
-          />
-          <img
-            src="https://img.icons8.com/color/24/000000/phone.png"
-            alt="phone"
-            className="w-6 h-6 mx-3"
-          />
-          <img
-            src="https://img.icons8.com/color/24/000000/ellipsis.png"
-            alt="more"
-            className="w-6 h-6 mx-3"
-          />
-        </section>
+        <HeaderIcons />
       </header>
-      {/* search menu */}
-      {/* <section className="flex justify-end p-3">
-        <section
-          className="flex items-center border-2 border-gray-300 px-3 py-2 rounded"
-          style={{}}
-        >
-          <img
-            src="https://img.icons8.com/color/24/000000/search--v1.png"
-            alt="search"
-            className="w-6 h-6 mr-2"
-          />
-          <input
-            type="text"
-            placeholder="Search"
-            className="focus:outline-none"
-            onChange={Search}
-          />
-        </section>
-      </section> */}
+      <MessageSearch Search={Search} />
       <main
         className="flex flex-col p-3"
         style={{
@@ -190,37 +114,108 @@ function ChatRight() {
         }}
       >
         <section className="flex flex-col">
-          {messages.map((message, index) => {
+          {filteredMessages.map((message, index) => {
             if (
               message.from === chatUser.uid &&
               message.to === auth.currentUser?.uid
             )
+              if (message.type === "image") {
+                return (
+                  <section className="flex" key={index}>
+                    <img
+                      src="https://img.icons8.com/color/48/000000/test-account.png"
+                      alt="profile"
+                      className="w-6 h-6 mr-2 rounded-full"
+                    />
+                    <section className="flex flex-col items-start mt-3">
+                      <img
+                        src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8d2FsbHBhcGVyfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
+                        alt=""
+                        style={{
+                          height: "200px",
+                          width: "200px",
+                          borderRadius: "10px",
+                        }}
+                        onClick={() => {
+                          setImage(message.message);
+                          document.getElementById('imageEnlarger').style.display = 'flex';
+                        }}
+                      />
+                      <p className="text-gray-400 text-xs mt-2">12:50</p>
+                    </section>
+                  </section>
+                );
+              } else 
+                return (
+                  <MessageItem
+                    message={message.message}
+                    index={index}
+                    time={message.time}
+                    key={index}
+                    sentForm={"left"}
+                  />
+                );
+            else if (
+              message.from === auth.currentUser?.uid &&
+              message.to === chatUser.uid
+            )
+              if (message.type === "image") {
+                return (
+                  <section className="flex flex-col items-end" key={index}>
+                    <section className="flex ">
+                      <section className="flex flex-col items-end mt-3">
+                        <img src={message.message} alt="" style={{
+                          height: "200px",
+                          width: "200px",
+                          borderRadius: "10px",
+                        }} onClick={
+                          () => {
+                            setImage(message.message);
+                            document.getElementById('imageEnlarger').style.display = 'flex';
+                          }
+                        }/>
+                        <p className="text-gray-400 text-xs mt-2">12:50</p>
+                      </section>
+                      <img
+                        src="https://img.icons8.com/color/48/000000/test-account.png"
+                        alt="profile"
+                        className="w-6 h-6 ms-2 rounded-full"
+                      />
+                    </section>
+                  </section>
+                )
+              }
+              else
               return (
-                <section className="flex flex-col items-start mt-3" key={index}>
-                  <p className="bg-gray-100 p-2 rounded-tr-3xl rounded-bl-3xl rounded-br-3xl">
-                    {message.message}
-                  </p>
-                  <p className="text-gray-400 text-xs">{message.time}</p>
-                </section>
+                <MessageItem
+                  message={message.message}
+                  index={index}
+                  time={message.time}
+                  key={index}
+                  sentForm={"right"}
+                />
               );
-            else if ( message.from === auth.currentUser?.uid && message.to === chatUser.uid )
-            return (
-              <section className="flex flex-col items-end mt-3" key={index}>
-                <p className="bg-blue-500 text-white p-2 rounded-tl-3xl rounded-br-3xl rounded-bl-3xl">
-                  {message.message}
-                </p>
-                <p className="text-gray-400 text-xs">{message.time}</p>
-              </section>
-            );
           })}
           <section id="bottom" ref={endRef}></section>
         </section>
       </main>
-      {EmojiKeyboard()}
-      <footer className="flex items-center justify-between p-3  border-t-2 border-gray-100 flex-wrap">
-        
+      <EmojiKeyboard />
+      <FileUploadMenu from={auth.currentUser?.uid} to={chatUser.uid} />
+      <ImageEnlarger image={image}/>
+      <footer className="flex items-center justify-between p-3  bg-gray-100 flex-wrap">
         <section className="flex items-center w-full">
-          <form onSubmit={sendMessage} className="w-full">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage({
+                message: e.target.message.value,
+                fromId: auth.currentUser?.uid,
+                toId: chatUser.uid,
+                type: "text",
+              });
+            }}
+            className="w-full"
+          >
             <input
               type="text"
               className="border-2 border-gray-100 px-3 py-2 rounded focus:outline-none w-full"
@@ -228,11 +223,11 @@ function ChatRight() {
               id="message"
             />
           </form>
-          <i className="fas fa-paper-plane text-blue-500 mx-2"></i>
+          <i className="fas fa-paper-plane text-blue-500 text-xl mx-2 border-2 border-gray-100 bg-white py-1 px-3 rounded-xl"></i>
         </section>
         <section className="flex items-center mr-4">
-          <i className="fas fa-smile text-yellow-500 cursor-pointer mx-2 m-4 border-2 border-gray-100 p-1 rounded"
-
+          <i
+            className="fas fa-smile text-yellow-500 cursor-pointer mx-2 m-4 border-2 border-gray-100 bg-white p-1 px-3 rounded-xl text-2xl"
             onClick={() => {
               const emojiKeyboard = document.getElementById("emojiKeyboard");
               if (emojiKeyboard.style.display === "block") {
@@ -242,8 +237,16 @@ function ChatRight() {
                   "block";
             }}
           ></i>
-          <i className="fas fa-paperclip cursor-pointer mx-2 m-4 border-2 border-gray-100 p-1 rounded"
-          ></i>
+          <i className="fas fa-paperclip cursor-pointer mx-2 m-4 border-2 border-gray-100 bg-white p-1 px-3 rounded-xl text-2xl" onClick={
+            () => {
+              const fileUploadScreen = document.getElementById('fileUploadScreen');
+              if (fileUploadScreen.style.display === 'flex') {
+                fileUploadScreen.style.display = 'none';
+              } else {
+                fileUploadScreen.style.display = 'flex';
+              }
+            }
+          }></i>
         </section>
       </footer>
     </main>
