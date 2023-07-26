@@ -21,7 +21,7 @@ function ChatScreen() {
       window.removeEventListener("resize", () => {});
     };
     
-  }, [width]);
+  }, [width, navigate]);
 
  
 

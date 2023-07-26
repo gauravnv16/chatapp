@@ -26,7 +26,7 @@ function Chat() {
     return () => {
       window.removeEventListener("resize", () => {});
     };
-  }, [width]);
+  }, [width, navigate]);
 
 
   return (
