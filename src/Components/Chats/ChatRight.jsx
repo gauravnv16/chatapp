@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { auth, database } from "../../config/firebaseConfig";
-import { onValue, ref } from "firebase/database";
+import { auth,db } from "../../config/firebaseConfig";
 import { Link } from "react-router-dom";
 import SortMessages from "../../Util/SortMessages";
 import EmojiKeyboard from "./Components/EmojiKeyBoard";
@@ -10,41 +9,20 @@ import MessageSearch from "./Components/MessageSearch";
 import sendMessage from "../../Util/SendMessage";
 import HeaderIcons from "./Components/HeaderIcons";
 import FileUploadMenu from "./Components/FileUpload";
+import ImageEnlarger from "./Components/ImageEnlarger";
+import { collection, orderBy, query } from "firebase/firestore";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 
-function ImageEnlarger({ image }) {
-  return (
-    <section
-      className="flex flex-col fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center"
-      onClick={() => {
-        document.getElementById("imageEnlarger").style.display = "none";
-      }}
-      id="imageEnlarger"
-      style={{
-        display: "none",
-      }}
-    >
-      <img src={image} alt="" className="w-1/2 h-1/2" />
-      {/* download button */}
-      <button
-        className="bg-blue-500 text-white p-2 rounded mt-2"
-        onClick={() => {
-          const link = document.createElement("a");
-          link.href = image;
-          link.download = "image";
-          link.click();
-        }}
-      >
-        download
-        <i className="fas fa-download ms-2"></i>
-      </button>
-    </section>
-  );
-}
 function ChatRight() {
   const [chatUser, setChatUser] = useState("");
-  const [messages, setMessages] = useState([]);
+  // const [messages, setMessages] = useState([]);
   const [filteredMessages, setFilteredMessages] = useState([]);
+  const chatRef = collection(db,"Chats");
+  const chatQuery = query(chatRef, orderBy("time2"));
+  const [messages] = useCollectionData(chatQuery, { idField: 'id' });
+  // const [filteredMessages] = useCollectionData()
   const path = useParams("1");
+  const { id } = path;
   const endRef = useRef(null);
   const [image, setImage] = useState("");
 
@@ -57,29 +35,19 @@ function ChatRight() {
     setFilteredMessages(SortMessages(filteredMessages));
   };
 
-  const { id } = path;
-
   useEffect(() => {
     const user = JSON.parse(sessionStorage.getItem("chatUser"));
     setChatUser(user);
-  }, [id, messages]);
+    if(messages === undefined) return;
+    setFilteredMessages(messages);
+    scrollToBottom();
+  }, [id, messages,filteredMessages]);
 
-  useEffect(() => {
-    const DataRef = ref(database, "messages/");
-    return onValue(DataRef, (snapshot) => {
-      const data = snapshot.val();
-      setMessages(SortMessages(Object.values(data)));
-      setFilteredMessages(SortMessages(Object.values(data)));
-    });
-  }, []);
 
   const scrollToBottom = () => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   if (!chatUser) return <h1>Loading...</h1>;
 
@@ -247,7 +215,7 @@ function ChatRight() {
                   "block";
             }}
           ></i>
-          <i
+          {/* <i
             className="fas fa-paperclip cursor-pointer mx-2 m-4 border-2 border-gray-100 bg-white p-1 px-3 rounded-xl text-2xl"
             onClick={() => {
               const fileUploadScreen =
@@ -258,7 +226,7 @@ function ChatRight() {
                 fileUploadScreen.style.display = "flex";
               }
             }}
-          ></i>
+          ></i> */}
         </section>
       </footer>
     </main>

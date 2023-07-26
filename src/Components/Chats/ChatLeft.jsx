@@ -1,14 +1,43 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../Contexts/UserContextProvider";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../../config/firebaseConfig";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
+function LogOutModalBox() {
+  const navigate = useNavigate();
+  return (
+    <div className="fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center" id="logOutmodal" style={{
+      display: 'none'
+    }}>
+      <div className="bg-white p-5 rounded-lg">
+        <h1 className="text-xl font-bold text-gray-700">
+          Are you sure you want to log out?
+        </h1>
+        <div className="flex justify-end mt-5">
+          <button className="px-3 py-2 rounded-lg bg-gray-200 mr-2" onClick={
+            () => {
+              document.getElementById('logOutmodal').style.display = 'none';
+            }
+          }>
+            Cancel
+          </button>
+          <button className="px-3 py-2 rounded-lg bg-red-500 text-white" onClick={
+            () => {
+              auth.signOut();
+              navigate('/login');
+            }
+          }>
+            Log Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+  )
+}
 function ChatLeft() {
   const [Users, setUsers] = useState([]);
-  const navigate = useNavigate();
-
   useEffect(() => {
     const getUsers = async () => {
       const docRef = await getDocs(collection(db, "Users"));
@@ -18,35 +47,46 @@ function ChatLeft() {
     getUsers();
   }, []);
 
-  if(auth.currentUser === null){
-    navigate('/login');
-    return;
-  }
-
   return (
     <aside
       style={{
         maxWidth: "400px",
         width: "100%",
         height: "90vh",
-        backgroundColor: "white",
-        border: "2px solid #e4e4e4",
       }}
-      className="flex flex-col"
+      className="flex flex-col border-r-2 border-gray-100 px-2 py-3"
     >
-      <header className="flex items-center justify-between p-3 border-b-2 border-gray-100">
-        <h1 className="text-xl">Chats</h1>
-        <section className="flex items-center space-x-2">
+      <header
+        className="flex flex-col p-2  px-3 rounded"
+        style={
+          {
+            // backgroundColor: "#212A3E",
+          }
+        }
+      >
+        <h1 className="flex  items-center justify-between text-2xl my-3 font-bold text-gray-700">
+          Chats
+          <i className="fas fa-ellipsis-v text-gray-400" onClick={
+            () => {
+              document.getElementById('logOutmodal').style.display = 'flex';
+            }
+          }></i>
+        </h1>
+        <section className="flex items-center space-x-2 p-3 rounded-lg border-2 bg-gray-200">
+          <i className="fas fa-search text-gray-400"></i>
           <input
             type="text"
-            className="border-2 border-gray-100 px-3 py-2 rounded focus:outline-none"
+            className="focus:outline-none w-full bg-gray-200"
             placeholder="Search"
+
           />
         </section>
       </header>
+      <hr className="my-2" />
+
       {/* menu */}
-      <section className="flex items-center justify-between p-3 border-b-2 border-gray-100">
-       {/* log out */}
+      {/* <section className="flex items-center justify-between p-3 border-b-2 border-gray-100">
+       
        <h2 className="text-lg">{auth.currentUser?.displayName || "User"}</h2>
         <button className="flex items-end px-3 py-2 rounded-xl bg-red-500" onClick={
           () => {
@@ -57,21 +97,23 @@ function ChatLeft() {
           <i className="fas fa-sign-out-alt text-white mr-2 text-sm "></i>
           <p className="text-white text-sm">Log Out</p>
         </button>
-      </section>
+      </section> */}
+      {/* modal box */}
+      {
+        <LogOutModalBox />
+      }
       <main
-        className="flex flex-col p-3"
+        className="flex flex-col"
         style={{
-          height: "calc(100vh - 80px)",
           overflowY: "scroll",
-          width: "100%",
         }}
       >
-        {Users.map((user) => {
+        {Users.map((user, index) => {
           if (user.uid !== auth.currentUser?.uid)
             return (
               <Link
-                key={user.id}
-                className="flex justify-between hover:cursor-pointer hover:bg-gray-100 p-2 border-2 border-gray-100 my-1"
+                key={index}
+                className="flex justify-between items-center hover:cursor-pointer hover:bg-gray-200 p-2 rounded-lg border-2 border-gray-100 hover:border-gray-200 my-1"
                 to={`/chat/${user.uid}`}
                 style={{
                   width: "100%",
@@ -82,33 +124,27 @@ function ChatLeft() {
               >
                 <section className="flex items-center">
                   <img
-                    src="https://img.icons8.com/color/48/000000/test-account.png"
+                    src={`https://i.pravatar.cc/300?img=${user.uid}`}
                     alt={user.name}
-                    className="w-8 h-8 rounded-full me-2"
+                    className="w-10 h-10 me-2 rounded-full"
                   />
                   <section className="flex flex-col">
-                    <h1 className="text-sm">{user.name}</h1>
-                    {/* <p className="text-gray-400 text-xs">{user?.lastMessage.slice(0,20) + '...'}</p> */}
+                    <h1 className="">
+                      {user.name}
+                      {/* <i className="fas fa-check-circle text-green-500 ms-1 text-xs"></i> */}
+                      </h1>
+                    <p className="text-gray-400 text-sm">{"hello"}
+                    
+                    </p>
                   </section>
                 </section>
                 <section className="flex flex-col items-end">
-                  <p className="text-gray-400 text-xs">
-                    {user?.lastMessageTime}
+                  <p className="text-gray-400 text-xs my-3">
+                    {user?.lastMessageTime || "12:00"}
                   </p>
-                  <div className="flex items-center space-x-1">
-                    <img
-                      src="https://img.icons8.com/color/24/000000/double-tick.png"
-                      alt="tick"
-                      className="w-4 h-4"
-                    />
-                    <img
-                      src="https://img.icons8.com/color/24/000000/double-tick.png"
-                      alt="tick"
-                      className="w-4 h-4"
-                    />
-                  </div>
                 </section>
               </Link>
+                  
             );
         })}
       </main>

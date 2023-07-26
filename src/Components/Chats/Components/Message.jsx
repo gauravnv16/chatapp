@@ -1,4 +1,6 @@
 // eslint-disable-next-line react/prop-types
+import PropTypes from 'prop-types';
+
 function MessageItem({ message, index, time, sentForm }) {
   if (sentForm === "left")
     return (
@@ -12,31 +14,36 @@ function MessageItem({ message, index, time, sentForm }) {
           <p className="bg-gray-100 p-2 rounded-tr-3xl rounded-bl-3xl rounded-br-3xl">
             {message}
           </p>
-          <p className="text-gray-400 text-xs">{time}</p>
+          <p className="text-gray-400 text-xs mt-2">{time.split(",")[1]}</p>
         </section>
       </section>
     );
   else if (sentForm === "right")
     return (
-        <div className="flex flex-col items-end">
+      <div className="flex flex-col items-end">
         <section className="flex ">
-
-        <section className="flex flex-col items-end mt-3" key={index}>
+          <section className="flex flex-col items-end mt-3" key={index}>
             <p className="bg-blue-500 text-white p-2 rounded-tl-3xl rounded-br-3xl rounded-bl-3xl">
-            {message}
+              {message}
             </p>
-        <p className="text-gray-400 text-xs">{time}</p>
-      </section>
-      <img
+            <p className="text-gray-400 text-xs mt-2">{time.split(",")[1]}</p>
+          </section>
+          <img
             src="https://img.icons8.com/color/48/000000/test-account.png"
             alt="profile"
             className="w-6 h-6 ms-2 rounded-full"
-            />
-      </section>
-        </div>
+          />
+        </section>
+      </div>
     );
 }
 
+
+MessageItem.propTypes = {
+  message: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  time: PropTypes.string.isRequired,
+  sentForm: PropTypes.string.isRequired,
+};
+
 export default MessageItem;
-
-

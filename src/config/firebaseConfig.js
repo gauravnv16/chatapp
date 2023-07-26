@@ -3,6 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 import { GoogleAuthProvider } from "firebase/auth";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDTpfRwWyu1PrLq7VZJJ0vyeT2qg8L48EE",
   authDomain: "glumehat.firebaseapp.com",
